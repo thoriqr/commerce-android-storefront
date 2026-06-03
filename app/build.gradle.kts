@@ -17,6 +17,9 @@ if (localPropertiesFile.exists()) {
 val apiBaseUrl = localProperties.getProperty("API_BASE_URL")
     ?: "https://example.com/"
 
+val assetBaseUrl = localProperties.getProperty("ASSET_BASE_URL")
+    ?: "https://example.com"
+
 android {
     namespace = "com.thoriqr.commercestorefront"
     compileSdk {
@@ -38,6 +41,12 @@ android {
             "String",
             "BASE_URL",
             "\"$apiBaseUrl\""
+        )
+
+        buildConfigField(
+            "String",
+            "ASSET_BASE_URL",
+            "\"$assetBaseUrl\""
         )
     }
 
@@ -79,6 +88,7 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.coil.compose)
     ksp(libs.hilt.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))
