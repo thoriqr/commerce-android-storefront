@@ -2,6 +2,7 @@ package com.thoriqr.commercestorefront.data.remote
 
 import com.thoriqr.commercestorefront.data.model.ApiResponse
 import com.thoriqr.commercestorefront.data.model.BannerDto
+import com.thoriqr.commercestorefront.data.model.CollectionPreviewDto
 import com.thoriqr.commercestorefront.data.model.PopularCategoryDto
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -14,4 +15,7 @@ interface StoreApi {
 
     @GET("store/categories/popular")
     suspend fun getPopularCategories(): ApiResponse<List<PopularCategoryDto>>
+
+    @GET("store/collections/preview")
+    suspend fun getCollectionPreview(): ApiResponse<List<CollectionPreviewDto>>
 }

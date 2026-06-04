@@ -10,3 +10,23 @@ sealed interface NetworkResult<out T> {
         val message: String
     ) : NetworkResult<Nothing>
 }
+
+inline fun <T> NetworkResult<T>.onSuccess(
+    action: (T) -> Unit
+): NetworkResult<T> {
+    if (this is NetworkResult.Success) {
+        action(data)
+    }
+
+    return this
+}
+
+inline fun <T> NetworkResult<T>.onError(
+    action: (String) -> Unit
+): NetworkResult<T> {
+    if (this is NetworkResult.Error) {
+        action(message)
+    }
+
+    return this
+}

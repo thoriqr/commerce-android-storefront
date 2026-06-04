@@ -3,11 +3,15 @@ package com.thoriqr.commercestorefront.ui.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thoriqr.commercestorefront.core.common.NetworkResult
+import com.thoriqr.commercestorefront.core.common.onError
+import com.thoriqr.commercestorefront.core.common.onSuccess
 import com.thoriqr.commercestorefront.data.model.BannerDto
 import com.thoriqr.commercestorefront.data.model.BannerPlacement
+import com.thoriqr.commercestorefront.data.model.CollectionPreviewDto
 import com.thoriqr.commercestorefront.data.model.PopularCategoryDto
 import com.thoriqr.commercestorefront.data.repository.BannerRepository
 import com.thoriqr.commercestorefront.data.repository.CategoryRepository
+import com.thoriqr.commercestorefront.data.repository.CollectionRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +23,8 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val bannerRepository: BannerRepository,
-    private val categoryRepository: CategoryRepository
+    private val categoryRepository: CategoryRepository,
+    private val collectionRepository: CollectionRepository
 ): ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -41,54 +46,76 @@ class HomeViewModel @Inject constructor(
                 categoryRepository.getPopularCategories()
             }
 
+            val collectionPreviewDeferred = async {
+                collectionRepository.getCollectionPreview()
+            }
+
             handleBannerResult(bannersDeferred.await())
 
             handlePopularCategoriesResult(categoriesDeferred.await())
+
+            handleCollectionPreviewResult(collectionPreviewDeferred.await())
         }
     }
 
     private fun handleBannerResult(
         result: NetworkResult<List<BannerDto>>
     ) {
-        when (result) {
-            is NetworkResult.Success -> {
-                _uiState.update {
-                    it.copy(
-                        banners = result.data
-                    )
-                }
-            }
-
-            is NetworkResult.Error -> {
-                _uiState.update {
-                    it.copy(
-                        bannerError = result.message
-                    )
-                }
-            }
-        }
+       result
+           .onSuccess { banners ->
+               _uiState.update {
+                   it.copy(
+                       banners = banners
+                   )
+               }
+           }
+           .onError { message ->
+               _uiState.update {
+                   it.copy(
+                       bannerError = message
+                   )
+               }
+           }
     }
 
 
     private fun handlePopularCategoriesResult(
         result: NetworkResult<List<PopularCategoryDto>>
     ) {
-        when (result) {
-            is NetworkResult.Success -> {
+        result
+            .onSuccess { categories ->
                 _uiState.update {
                     it.copy(
-                        popularCategories = result.data
+                        popularCategories = categories
                     )
                 }
             }
+            .onError { message ->
+                _uiState.update {
+                    it.copy(
+                        popularCategoriesError = message
+                    )
+                }
+            }
+    }
 
-            is NetworkResult.Error -> {
+    private fun handleCollectionPreviewResult(
+        result: NetworkResult<List<CollectionPreviewDto>>
+    ) {
+        result
+            .onSuccess { collections ->
                 _uiState.update {
                     it.copy(
-                        popularCategoriesError = result.message
+                        collectionPreview = collections
                     )
                 }
             }
-        }
+            .onError { message ->
+                _uiState.update {
+                    it.copy(
+                        collectionPreviewError = message
+                    )
+                }
+            }
     }
 }

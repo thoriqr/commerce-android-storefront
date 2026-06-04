@@ -1,4 +1,4 @@
-package com.thoriqr.commercestorefront.ui.home
+package com.thoriqr.commercestorefront.ui.home.section
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
