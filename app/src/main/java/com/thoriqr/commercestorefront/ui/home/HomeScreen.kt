@@ -1,6 +1,7 @@
 package com.thoriqr.commercestorefront.ui.home
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
@@ -8,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.thoriqr.commercestorefront.data.model.BannerDto
 import com.thoriqr.commercestorefront.ui.home.section.CollectionPreviewSection
 import com.thoriqr.commercestorefront.ui.home.section.HeroBannerCarousel
 import com.thoriqr.commercestorefront.ui.home.section.PopularCategoriesSection
@@ -16,11 +18,15 @@ import com.thoriqr.commercestorefront.ui.home.skeleton.HeroBannerCarouselSkeleto
 import com.thoriqr.commercestorefront.ui.home.skeleton.PopularCategoriesSkeleton
 
 @Composable
-fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
+fun HomeScreen(
+    viewModel: HomeViewModel = hiltViewModel(),
+    onBannerClick: (BannerDto) -> Unit
+) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
     LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(24.dp)
+        verticalArrangement = Arrangement.spacedBy(24.dp),
+        contentPadding = PaddingValues(12.dp)
     ) {
 
         item {
@@ -28,7 +34,8 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                 HeroBannerCarouselSkeleton()
             } else {
                 HeroBannerCarousel(
-                    banners = uiState.value.banners
+                    banners = uiState.value.banners,
+                    onBannerClick = onBannerClick
                 )
             }
         }

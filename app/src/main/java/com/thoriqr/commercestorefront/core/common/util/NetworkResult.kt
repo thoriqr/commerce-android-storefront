@@ -1,4 +1,4 @@
-package com.thoriqr.commercestorefront.core.common
+package com.thoriqr.commercestorefront.core.common.util
 
 sealed interface NetworkResult<out T> {
 

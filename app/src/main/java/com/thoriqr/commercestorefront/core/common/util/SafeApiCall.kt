@@ -1,10 +1,10 @@
-package com.thoriqr.commercestorefront.core.common
+package com.thoriqr.commercestorefront.core.common.util
 
 import com.thoriqr.commercestorefront.data.model.ApiResponse
 
 suspend fun <T> safeApiCall(
     apiCall: suspend () -> ApiResponse<T>
-): NetworkResult<T>{
+): NetworkResult<T> {
 
     return try {
         val response = apiCall()

@@ -2,9 +2,9 @@ package com.thoriqr.commercestorefront.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.thoriqr.commercestorefront.core.common.NetworkResult
-import com.thoriqr.commercestorefront.core.common.onError
-import com.thoriqr.commercestorefront.core.common.onSuccess
+import com.thoriqr.commercestorefront.core.common.util.NetworkResult
+import com.thoriqr.commercestorefront.core.common.util.onError
+import com.thoriqr.commercestorefront.core.common.util.onSuccess
 import com.thoriqr.commercestorefront.data.model.BannerDto
 import com.thoriqr.commercestorefront.data.model.BannerPlacement
 import com.thoriqr.commercestorefront.data.model.CollectionPreviewDto

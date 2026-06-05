@@ -17,8 +17,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.thoriqr.commercestorefront.core.common.CurrencyFormatter
-import com.thoriqr.commercestorefront.core.common.ImageUrl
+import com.thoriqr.commercestorefront.core.common.util.CurrencyFormatter
+import com.thoriqr.commercestorefront.core.common.util.ImageUrl
 import com.thoriqr.commercestorefront.data.model.ProductCardDto
 
 @Composable

@@ -1,4 +1,4 @@
-package com.thoriqr.commercestorefront.ui.navigation
+package com.thoriqr.commercestorefront.core.common.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Category

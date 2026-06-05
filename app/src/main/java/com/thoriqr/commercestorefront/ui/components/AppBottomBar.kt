@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.thoriqr.commercestorefront.ui.navigation.BottomNavItem
+import com.thoriqr.commercestorefront.core.common.navigation.BottomNavItem
 
 @Composable
 fun AppBottomBar(

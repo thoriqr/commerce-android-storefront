@@ -1,4 +1,4 @@
-package com.thoriqr.commercestorefront.core.common
+package com.thoriqr.commercestorefront.core.common.util
 
 import com.thoriqr.commercestorefront.BuildConfig
 

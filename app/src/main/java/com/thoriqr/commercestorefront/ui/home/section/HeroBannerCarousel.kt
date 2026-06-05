@@ -28,12 +28,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.thoriqr.commercestorefront.core.common.ImageUrl
+import com.thoriqr.commercestorefront.core.common.util.ImageUrl
 import com.thoriqr.commercestorefront.data.model.BannerDto
 
 @Composable
 fun HeroBannerCarousel(
-    banners: List<BannerDto>
+    banners: List<BannerDto>,
+    onBannerClick: (BannerDto) -> Unit
 ) {
     val pagerState = rememberPagerState {
         banners.size
@@ -49,7 +50,10 @@ fun HeroBannerCarousel(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(2f),
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(16.dp),
+                onClick = {
+                    onBannerClick(banners[page])
+                }
             ) {
                 Box(
                     modifier = Modifier.fillMaxSize(),

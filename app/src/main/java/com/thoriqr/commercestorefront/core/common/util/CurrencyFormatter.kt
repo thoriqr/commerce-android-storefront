@@ -1,4 +1,4 @@
-package com.thoriqr.commercestorefront.core.common
+package com.thoriqr.commercestorefront.core.common.util
 
 import java.text.NumberFormat
 import java.util.Locale
