@@ -1,6 +1,8 @@
 package com.thoriqr.commercestorefront.core.common.navigation
 
 import com.thoriqr.commercestorefront.ui.listing.ProductListingType
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 sealed class AppDestination(
     val route: String
@@ -18,7 +20,12 @@ sealed class AppDestination(
             type: ProductListingType,
             value: String
         ): String {
-            return "product-listing/${type.name.lowercase()}/$value"
+            val encodedValue =
+                URLEncoder.encode(
+                    value,
+                    StandardCharsets.UTF_8.toString()
+                )
+            return "product-listing/${type.name.lowercase()}/$encodedValue"
         }
     }
 }

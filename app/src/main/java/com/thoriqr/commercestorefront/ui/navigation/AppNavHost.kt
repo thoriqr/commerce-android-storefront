@@ -11,6 +11,8 @@ import com.thoriqr.commercestorefront.ui.categories.CategoriesScreen
 import com.thoriqr.commercestorefront.ui.home.HomeScreen
 import com.thoriqr.commercestorefront.ui.listing.ProductListingScreen
 import com.thoriqr.commercestorefront.ui.listing.ProductListingType
+import java.net.URLDecoder
+import java.nio.charset.StandardCharsets
 
 @Composable
 fun AppNavHost(
@@ -32,6 +34,22 @@ fun AppNavHost(
                             )
                         )
                     }
+                },
+                onCategoryClick = { category ->
+                    navController.navigate(
+                        AppDestination.ProductListing.createRoute(
+                            type = ProductListingType.CATEGORY,
+                            value = category.slugPath
+                        )
+                    )
+                },
+                onCollectionClick = { collection ->
+                    navController.navigate(
+                        AppDestination.ProductListing.createRoute(
+                            type = ProductListingType.COLLECTION,
+                            value = collection.slug
+                        )
+                    )
                 }
             )
         }
@@ -46,29 +64,8 @@ fun AppNavHost(
 
         composable(
             route = AppDestination.ProductListing.route
-        ) { backStackEntry ->
-
-            val typeString =
-                backStackEntry.arguments?.getString("type")
-                    ?: ""
-
-            val type =
-                runCatching {
-                    ProductListingType.valueOf(
-                        typeString.uppercase()
-                    )
-                }.getOrElse {
-                    ProductListingType.COLLECTION
-                }
-
-            val value =
-                backStackEntry.arguments?.getString("value")
-                    ?: ""
-
-            ProductListingScreen(
-                type = type,
-                value = value
-            )
+        ) {
+            ProductListingScreen()
         }
     }
 }

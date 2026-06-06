@@ -27,6 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 @Composable
 fun PopularCategoriesSection(
     categories: List<PopularCategoryDto>,
+    onCategoryClick: (PopularCategoryDto) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
@@ -51,7 +52,9 @@ fun PopularCategoriesSection(
                 Surface(
                     shape = RoundedCornerShape(50),
                     tonalElevation = 2.dp,
-                    onClick = {}
+                    onClick = {
+                        onCategoryClick(category)
+                    }
                 ) {
                     Row(
                         modifier = Modifier.padding(

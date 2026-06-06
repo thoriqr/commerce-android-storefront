@@ -10,6 +10,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thoriqr.commercestorefront.data.model.BannerDto
+import com.thoriqr.commercestorefront.data.model.CollectionPreviewDto
+import com.thoriqr.commercestorefront.data.model.PopularCategoryDto
 import com.thoriqr.commercestorefront.ui.home.section.CollectionPreviewSection
 import com.thoriqr.commercestorefront.ui.home.section.HeroBannerCarousel
 import com.thoriqr.commercestorefront.ui.home.section.PopularCategoriesSection
@@ -20,7 +22,9 @@ import com.thoriqr.commercestorefront.ui.home.skeleton.PopularCategoriesSkeleton
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
-    onBannerClick: (BannerDto) -> Unit
+    onBannerClick: (BannerDto) -> Unit,
+    onCategoryClick: (PopularCategoryDto) -> Unit,
+    onCollectionClick: (CollectionPreviewDto) -> Unit
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -48,6 +52,7 @@ fun HomeScreen(
             } else {
                 PopularCategoriesSection(
                     categories = uiState.value.popularCategories,
+                    onCategoryClick = onCategoryClick,
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
             }
@@ -59,7 +64,8 @@ fun HomeScreen(
             } else {
                 CollectionPreviewSection(
                     collections = uiState.value.collectionPreview,
-                    modifier = Modifier.padding(horizontal = 16.dp)
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    onCollectionClick = onCollectionClick
                 )
             }
         }

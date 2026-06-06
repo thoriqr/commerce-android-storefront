@@ -8,3 +8,11 @@ data class ApiResponse<T>(
     val data: T? = null,
     val error: ApiError? = null
 )
+
+@Serializable
+data class ApiResponseWithMeta<T, M>(
+    val success: Boolean,
+    val data: T? = null,
+    val meta: M? = null,
+    val error: ApiError? = null
+)

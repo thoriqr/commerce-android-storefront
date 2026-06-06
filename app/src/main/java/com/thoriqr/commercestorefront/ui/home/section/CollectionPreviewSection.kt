@@ -1,5 +1,6 @@
 package com.thoriqr.commercestorefront.ui.home.section
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,7 +23,8 @@ import com.thoriqr.commercestorefront.ui.components.ProductCard
 @Composable
 fun CollectionPreviewSection(
     modifier: Modifier = Modifier,
-    collections: List<CollectionPreviewDto>
+    collections: List<CollectionPreviewDto>,
+    onCollectionClick: (CollectionPreviewDto) -> Unit
 ) {
     Column(
         modifier = modifier,
@@ -38,6 +40,9 @@ fun CollectionPreviewSection(
                 ) {
                     Text(
                         text = collection.name,
+                        modifier = Modifier.clickable{
+                            onCollectionClick(collection)
+                        },
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -45,6 +50,9 @@ fun CollectionPreviewSection(
                     if (collection.hasMoreProducts) {
                         Text(
                             text = "View All",
+                            modifier = Modifier.clickable {
+                                onCollectionClick(collection)
+                            },
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.primary
                         )
