@@ -31,7 +31,7 @@ interface StoreApi {
     @GET("store/collections/preview")
     suspend fun getCollectionPreview(): ApiResponse<List<CollectionPreviewDto>>
 
-    @GET("store/collections")
+    @GET("store/collections/{slug}")
     suspend fun getCollectionDetail(
         @Path("slug") slug: String
     ): ApiResponse<CollectionDetailDto>

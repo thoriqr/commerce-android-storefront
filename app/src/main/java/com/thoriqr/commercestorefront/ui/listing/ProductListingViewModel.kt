@@ -32,7 +32,7 @@ class ProductListingViewModel @Inject constructor(
     private val filterRepository: FilterRepository,
     savedStateHandle: SavedStateHandle
 ): ViewModel() {
-    private val type =
+    val type =
         ProductListingType.valueOf(
             checkNotNull(
                 savedStateHandle.get<String>("type")
@@ -40,7 +40,7 @@ class ProductListingViewModel @Inject constructor(
         )
 
 
-    private val value =
+    val value =
         checkNotNull(
             savedStateHandle.get<String>("value")
         )
