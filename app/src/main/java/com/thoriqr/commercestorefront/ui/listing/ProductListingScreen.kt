@@ -1,14 +1,10 @@
 package com.thoriqr.commercestorefront.ui.listing
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -18,9 +14,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.thoriqr.commercestorefront.ui.components.ProductCard
 import com.thoriqr.commercestorefront.ui.listing.section.FilterSortSection
 import com.thoriqr.commercestorefront.ui.listing.section.ListingHeader
+import com.thoriqr.commercestorefront.ui.listing.section.ProductGridSection
 
 @Composable
 fun ProductListingScreen(
@@ -32,12 +28,29 @@ fun ProductListingScreen(
         mutableStateOf(false)
     }
 
+    val filterCount = uiState.query.dimensions.size +
+            if (
+                uiState.query.priceMin != null ||
+                uiState.query.priceMax != null
+            ) 1 else 0
+
     if (showFilterSheet) {
         FilterBottomSheet(
             closeFilterSheet = {
                 showFilterSheet = false
             },
-            availableFilters = uiState.availableFilters
+            query = uiState.query,
+            availableFilters = uiState.availableFilters,
+            filterCount = filterCount,
+            onApply = { minPrice, maxPrice, dimensions ->
+
+                viewModel.applyFilters(
+                    priceMin = minPrice,
+                    priceMax = maxPrice,
+                    dimensions = dimensions
+                )
+            },
+            onClear = { viewModel.clearFilters() }
         )
     }
 
@@ -63,27 +76,17 @@ fun ProductListingScreen(
             onSortSelected = viewModel::onSortSelected,
             onFilterClick = {
                 showFilterSheet = true
-            }
+            },
+            filterCount = filterCount,
         )
 
         Spacer(
             modifier = Modifier.height(12.dp)
         )
 
-        LazyVerticalGrid (
-            columns = GridCells.Fixed(2),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            items(
-                items = uiState.products,
-                key = { it.id }
-            ) { product ->
-                ProductCard(
-                    product = product
-                )
-            }
-        }
+        ProductGridSection(
+            products = uiState.products
+        )
     }
 
 

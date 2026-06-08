@@ -1,13 +1,14 @@
 package com.thoriqr.commercestorefront.ui.listing
 
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
@@ -19,6 +20,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,18 +36,37 @@ import com.thoriqr.commercestorefront.data.model.DimensionFilterDto
 @Composable
 fun FilterBottomSheet(
     closeFilterSheet: () -> Unit,
-    availableFilters: List<DimensionFilterDto>
+    query: ProductListingQuery,
+    availableFilters: List<DimensionFilterDto>,
+    filterCount: Int,
+    onApply: (Int?, Int?, Map<String, String>) -> Unit,
+    onClear: () -> Unit
 ) {
-    var minPrice by remember {
-        mutableStateOf("")
+    var minPrice by remember(query) {
+        mutableStateOf(
+            query.priceMin?.toString() ?: ""
+        )
     }
 
-    var maxPrice by remember {
-        mutableStateOf("")
+    var maxPrice by remember(query) {
+        mutableStateOf(
+            query.priceMax?.toString() ?: ""
+        )
+    }
+
+    var selectedDimensions by remember(query) {
+        mutableStateOf(
+            query.dimensions.mapValues { (_, value) ->
+                value.split(",").toSet()
+            }
+        )
     }
 
     ModalBottomSheet(
-        onDismissRequest = closeFilterSheet
+        onDismissRequest = closeFilterSheet,
+        sheetState = rememberModalBottomSheetState (
+            skipPartiallyExpanded = true
+        )
     ) {
         Column (
             modifier = Modifier
@@ -57,7 +78,11 @@ fun FilterBottomSheet(
         ) {
 
             Text(
-                text = "Filters",
+                text =  if (filterCount > 0) {
+                    "Filters ($filterCount)"
+                } else {
+                    "Filters"
+                },
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold
             )
@@ -117,36 +142,71 @@ fun FilterBottomSheet(
                 )
             )
 
-
-
             if(availableFilters.isNotEmpty()) {
 
                 Spacer(
                     modifier = Modifier.height(24.dp)
                 )
 
-                availableFilters.forEach { filter ->
+                availableFilters.forEachIndexed  { index, filter ->
                     Text(
                         text = filter.label,
                         style = MaterialTheme.typography.titleMedium
                     )
 
-                    FlowRow (
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    Spacer(
+                        modifier = Modifier.height(8.dp)
+                    )
+
+                    Row (
+                        modifier = Modifier.horizontalScroll(
+                            rememberScrollState()
+                        ),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         filter.values.forEach { option ->
 
                             FilterChip(
-                                selected = false,
-                                onClick = {},
+                                selected =
+                                    selectedDimensions[filter.name]
+                                        ?.contains(option.value)
+                                        ?: false,
+                                onClick = {
+                                    val currentValues =
+                                        selectedDimensions[filter.name]
+                                            ?: emptySet()
+
+                                    val newValues =
+                                        if (currentValues.contains(option.value)) {
+                                            currentValues - option.value
+                                        } else {
+                                            currentValues + option.value
+                                        }
+
+                                    selectedDimensions =
+                                        selectedDimensions.toMutableMap().apply {
+
+                                            if (newValues.isEmpty()) {
+                                                remove(filter.name)
+                                            } else {
+                                                put(filter.name, newValues)
+                                            }
+                                        }
+                                },
                                 label = {
                                     Text(option.label)
                                 }
                             )
                         }
                     }
+
+                    if (index != availableFilters.lastIndex) {
+                        Spacer(
+                            modifier = Modifier.height(20.dp)
+                        )
+                    }
                 }
+
             }
 
             Spacer(
@@ -157,17 +217,34 @@ fun FilterBottomSheet(
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 OutlinedButton(
-                    onClick = {},
+                    onClick = {
+                        minPrice = ""
+                        maxPrice = ""
+
+                        selectedDimensions = emptyMap()
+
+                        onClear()
+
+                        closeFilterSheet()
+                    },
                     modifier = Modifier.weight(1f)
-                        .height(48.dp)
                 ) {
                     Text("Clear")
                 }
 
                 Button(
-                    onClick = {},
+                    onClick = {
+                        onApply(
+                            minPrice.toIntOrNull(),
+                            maxPrice.toIntOrNull(),
+                            selectedDimensions.mapValues {
+                                it.value.joinToString(",")
+                            }
+                        )
+
+                        closeFilterSheet()
+                    },
                     modifier = Modifier.weight(1f)
-                        .height(48.dp)
                 ) {
                     Text("Apply")
                 }

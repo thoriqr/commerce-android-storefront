@@ -80,37 +80,17 @@ class ProductListingViewModel @Inject constructor(
         reloadProducts()
     }
 
-    fun onPriceChanged(
-        min: Int?,
-        max: Int?
+    fun applyFilters(
+        priceMin: Int?,
+        priceMax: Int?,
+        dimensions: Map<String, String>
     ) {
         _uiState.update {
             it.copy(
                 query = it.query.copy(
-                    priceMin = min,
-                    priceMax = max,
-                    cursor = null
-                )
-            )
-        }
-
-        reloadProducts()
-    }
-
-    fun onDimensionChanged(
-        key: String,
-        value: String
-    ) {
-        val dimensions =
-            _uiState.value.query.dimensions.toMutableMap()
-
-        dimensions[key] = value
-
-        _uiState.update {
-            it.copy(
-                query = it.query.copy(
-                    dimensions = dimensions,
-                    cursor = null
+                    priceMin = priceMin,
+                    priceMax = priceMax,
+                    dimensions = dimensions
                 )
             )
         }
@@ -121,7 +101,11 @@ class ProductListingViewModel @Inject constructor(
     fun clearFilters() {
         _uiState.update {
             it.copy(
-                query = ProductListingQuery()
+                query = it.query.copy(
+                    priceMin = null,
+                    priceMax = null,
+                    dimensions = emptyMap()
+                )
             )
         }
 

@@ -27,7 +27,8 @@ import com.thoriqr.commercestorefront.ui.listing.ProductSortOption
 fun FilterSortSection(
     selectedSort: ProductSortOption,
     onSortSelected: (ProductSortOption) -> Unit,
-    onFilterClick: () -> Unit
+    onFilterClick: () -> Unit,
+    filterCount: Int,
 ) {
     var expanded by remember {
         mutableStateOf(false)
@@ -50,7 +51,13 @@ fun FilterSortSection(
                 modifier = Modifier.width(8.dp)
             )
 
-            Text("Filters")
+            Text(
+                text =  if (filterCount > 0) {
+                "Filters ($filterCount)"
+            } else {
+                "Filters"
+            }
+            )
         }
 
         Box(
