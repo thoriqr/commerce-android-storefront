@@ -12,6 +12,9 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -25,6 +28,19 @@ fun ProductListingScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
+    var showFilterSheet by remember {
+        mutableStateOf(false)
+    }
+
+    if (showFilterSheet) {
+        FilterBottomSheet(
+            closeFilterSheet = {
+                showFilterSheet = false
+            },
+            availableFilters = uiState.availableFilters
+        )
+    }
+
     Column(
         modifier = Modifier
         .fillMaxSize()
@@ -35,14 +51,20 @@ fun ProductListingScreen(
         ListingHeader(
             type = viewModel.type,
             uiState = uiState,
-            query = viewModel.value
+            search = viewModel.value
         )
 
         Spacer(
             modifier = Modifier.height(12.dp)
         )
 
-        FilterSortSection()
+        FilterSortSection(
+            selectedSort = uiState.query.sort,
+            onSortSelected = viewModel::onSortSelected,
+            onFilterClick = {
+                showFilterSheet = true
+            }
+        )
 
         Spacer(
             modifier = Modifier.height(12.dp)

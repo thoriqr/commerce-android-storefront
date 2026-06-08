@@ -6,6 +6,8 @@ import com.thoriqr.commercestorefront.core.common.util.safeApiCallWithMeta
 import com.thoriqr.commercestorefront.data.model.ApiResponseWithMeta
 import com.thoriqr.commercestorefront.data.model.ProductCardDto
 import com.thoriqr.commercestorefront.data.remote.StoreApi
+import com.thoriqr.commercestorefront.ui.listing.ProductListingQuery
+import com.thoriqr.commercestorefront.ui.listing.toQueryMap
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -15,39 +17,39 @@ class ProductListingRepository @Inject constructor(
 ) {
     suspend fun getByCollection(
         slug: String,
-        cursor: String?
+        filters: ProductListingQuery
     ): NetworkResult<ApiResponseWithMeta<List<ProductCardDto>, CursorMetaDto>> {
 
         return safeApiCallWithMeta {
             storeApi.getProductsByCollection(
                 slug = slug,
-                cursor = cursor
+                filters = filters.toQueryMap()
             )
         }
     }
 
     suspend fun getByCategory(
         slugPath: String,
-        cursor: String?
+        filters: ProductListingQuery
     ): NetworkResult<ApiResponseWithMeta<List<ProductCardDto>, CursorMetaDto>> {
 
         return safeApiCallWithMeta {
             storeApi.getProductsByCategory(
                 slugPath = slugPath,
-                cursor = cursor
+                filters = filters.toQueryMap()
             )
         }
     }
 
     suspend fun getBySearch(
-        query: String,
-        cursor: String?
+        search: String,
+        filters: ProductListingQuery
     ): NetworkResult<ApiResponseWithMeta<List<ProductCardDto>, CursorMetaDto>> {
 
         return safeApiCallWithMeta {
             storeApi.searchProducts(
-                query = query,
-                cursor = cursor
+                search = search,
+                filters = filters.toQueryMap()
             )
         }
     }

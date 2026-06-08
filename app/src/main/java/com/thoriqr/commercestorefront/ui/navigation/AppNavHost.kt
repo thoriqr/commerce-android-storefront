@@ -11,8 +11,6 @@ import com.thoriqr.commercestorefront.ui.categories.CategoriesScreen
 import com.thoriqr.commercestorefront.ui.home.HomeScreen
 import com.thoriqr.commercestorefront.ui.listing.ProductListingScreen
 import com.thoriqr.commercestorefront.ui.listing.ProductListingType
-import java.net.URLDecoder
-import java.nio.charset.StandardCharsets
 
 @Composable
 fun AppNavHost(

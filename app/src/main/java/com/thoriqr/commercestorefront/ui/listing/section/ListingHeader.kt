@@ -14,7 +14,7 @@ import com.thoriqr.commercestorefront.ui.listing.ProductListingUiState
 fun ListingHeader(
     type: ProductListingType,
     uiState: ProductListingUiState,
-    query: String? = null,
+    search: String? = null,
 ) {
     when(type) {
         ProductListingType.COLLECTION -> {
@@ -31,7 +31,7 @@ fun ListingHeader(
 
         ProductListingType.SEARCH -> {
             SearchHeader(
-                query.orEmpty()
+                search.orEmpty()
             )
 
         }

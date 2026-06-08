@@ -10,8 +10,10 @@ data class ProductListingUiState(
     val categoryDetail: CategoryDetailDto? = null,
     val collectionDetail: CollectionDetailDto? = null,
 
-    val filters: List<DimensionFilterDto> = emptyList(),
+    val availableFilters: List<DimensionFilterDto> = emptyList(),
     val products: List<ProductCardDto> = emptyList(),
+
+    val query: ProductListingQuery = ProductListingQuery(),
 
     val isDetailLoading: Boolean = false,
     val detailError: String? = null,

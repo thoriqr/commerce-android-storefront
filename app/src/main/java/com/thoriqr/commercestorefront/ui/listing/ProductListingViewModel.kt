@@ -54,14 +54,126 @@ class ProductListingViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     init {
-        loadScreenData()
+        loadInitialData()
     }
 
-    private fun loadScreenData() {
+    private fun loadInitialData() {
         when (type) {
             ProductListingType.CATEGORY -> loadCategoryPage()
             ProductListingType.COLLECTION -> loadCollectionPage()
             ProductListingType.SEARCH -> loadSearchPage()
+        }
+    }
+
+    fun onSortSelected(
+        sort: ProductSortOption
+    ) {
+        _uiState.update {
+            it.copy(
+                query = it.query.copy(
+                    sort = sort,
+                    cursor = null
+                )
+            )
+        }
+
+        reloadProducts()
+    }
+
+    fun onPriceChanged(
+        min: Int?,
+        max: Int?
+    ) {
+        _uiState.update {
+            it.copy(
+                query = it.query.copy(
+                    priceMin = min,
+                    priceMax = max,
+                    cursor = null
+                )
+            )
+        }
+
+        reloadProducts()
+    }
+
+    fun onDimensionChanged(
+        key: String,
+        value: String
+    ) {
+        val dimensions =
+            _uiState.value.query.dimensions.toMutableMap()
+
+        dimensions[key] = value
+
+        _uiState.update {
+            it.copy(
+                query = it.query.copy(
+                    dimensions = dimensions,
+                    cursor = null
+                )
+            )
+        }
+
+        reloadProducts()
+    }
+
+    fun clearFilters() {
+        _uiState.update {
+            it.copy(
+                query = ProductListingQuery()
+            )
+        }
+
+        reloadProducts()
+    }
+
+    private fun reloadProducts() {
+
+        _uiState.update {
+            it.copy(
+                isProductsLoading = true,
+                productsError = null,
+                products = emptyList(),
+                hasMore = false,
+                nextCursor = null
+            )
+        }
+
+        viewModelScope.launch {
+
+            val result =
+                when (type) {
+
+                    ProductListingType.CATEGORY -> {
+                        productListingRepository.getByCategory(
+                            slugPath = value,
+                            filters = _uiState.value.query.copy(
+                                cursor = null
+                            )
+                        )
+                    }
+
+                    ProductListingType.COLLECTION -> {
+                        productListingRepository.getByCollection(
+                            slug = value,
+                            filters = _uiState.value.query.copy(
+                                cursor = null
+                            )
+                        )
+                    }
+
+                    ProductListingType.SEARCH -> {
+                        productListingRepository.getBySearch(
+                            search = value,
+                            filters = _uiState.value.query.copy(
+                                cursor = null
+                            )
+                        )
+                    }
+                }
+
+            handleProductResult(result)
         }
     }
 
@@ -87,7 +199,7 @@ class ProductListingViewModel @Inject constructor(
             val productsDeferred = async {
                 productListingRepository.getByCategory(
                     slugPath = value,
-                    cursor = null
+                    filters = _uiState.value.query
                 )
             }
 
@@ -122,7 +234,7 @@ class ProductListingViewModel @Inject constructor(
             val productsDeferred = async {
                 productListingRepository.getByCollection(
                     slug = value,
-                    cursor = null
+                    filters = _uiState.value.query
                 )
             }
 
@@ -152,8 +264,8 @@ class ProductListingViewModel @Inject constructor(
 
             val productsDeferred = async {
                 productListingRepository.getBySearch(
-                    query = value,
-                    cursor = null
+                    search = value,
+                    filters = _uiState.value.query
                 )
             }
 
@@ -223,7 +335,7 @@ class ProductListingViewModel @Inject constructor(
 
                 _uiState.update {
                     it.copy(
-                        filters = filters,
+                        availableFilters = filters,
                         isFiltersLoading = false
                     )
                 }

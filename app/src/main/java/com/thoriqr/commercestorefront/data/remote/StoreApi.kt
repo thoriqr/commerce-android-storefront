@@ -13,6 +13,7 @@ import com.thoriqr.commercestorefront.data.model.ProductCardDto
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
+import retrofit2.http.QueryMap
 
 interface StoreApi {
     @GET("store/marketing/banners")
@@ -49,21 +50,21 @@ interface StoreApi {
     @GET("store/products/by-collection")
     suspend fun getProductsByCollection(
         @Query("slug") slug: String,
-        @Query("cursor") cursor: String? = null
+        @QueryMap filters: Map<String, String>
     ): ApiResponseWithMeta<
             List<ProductCardDto>, CursorMetaDto>
 
     @GET("store/products/by-category")
     suspend fun getProductsByCategory(
         @Query("slugPath") slugPath: String,
-        @Query("cursor") cursor: String? = null
+        @QueryMap filters: Map<String, String>
     ): ApiResponseWithMeta<
             List<ProductCardDto>, CursorMetaDto>
 
     @GET("store/products/by-search")
     suspend fun searchProducts(
-        @Query("q") query: String,
-        @Query("cursor") cursor: String? = null
+        @Query("q") search: String,
+        @QueryMap filters: Map<String, String>
     ): ApiResponseWithMeta<
             List<ProductCardDto>, CursorMetaDto>
 }
