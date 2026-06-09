@@ -2,9 +2,12 @@ package com.thoriqr.commercestorefront.ui.listing.section
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.thoriqr.commercestorefront.ui.listing.ProductListingType
@@ -54,6 +57,10 @@ private fun CollectionHeader (title: String) {
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
+
+        Spacer(
+            modifier = Modifier.height(12.dp)
+        )
     }
 }
 
@@ -73,6 +80,10 @@ private fun CategoryHeader(title: String) {
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
+
+        Spacer(
+            modifier = Modifier.height(12.dp)
+        )
     }
 }
 
@@ -91,6 +102,10 @@ fun SearchHeader(title: String) {
             text = "\"$title\"",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+
+        Spacer(
+            modifier = Modifier.height(12.dp)
         )
     }
 }

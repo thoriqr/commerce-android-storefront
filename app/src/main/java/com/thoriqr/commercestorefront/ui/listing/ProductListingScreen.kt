@@ -1,10 +1,13 @@
 package com.thoriqr.commercestorefront.ui.listing
 
+import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -14,14 +17,22 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.thoriqr.commercestorefront.ui.listing.section.FilterBottomSheet
 import com.thoriqr.commercestorefront.ui.listing.section.FilterSortSection
 import com.thoriqr.commercestorefront.ui.listing.section.ListingHeader
 import com.thoriqr.commercestorefront.ui.listing.section.ProductGridSection
 
+@SuppressLint("FrequentlyChangingValue")
 @Composable
 fun ProductListingScreen(
     viewModel: ProductListingViewModel = hiltViewModel()
 ) {
+    val gridState = rememberLazyGridState()
+
+    val showHeader =
+        gridState.firstVisibleItemIndex == 0 &&
+                gridState.firstVisibleItemScrollOffset < 50
+
     val uiState by viewModel.uiState.collectAsState()
 
     var showFilterSheet by remember {
@@ -61,15 +72,15 @@ fun ProductListingScreen(
     ) {
         Spacer(modifier = Modifier.height(12.dp))
 
-        ListingHeader(
-            type = viewModel.type,
-            uiState = uiState,
-            search = viewModel.value
-        )
-
-        Spacer(
-            modifier = Modifier.height(12.dp)
-        )
+        AnimatedVisibility (
+            visible = showHeader,
+        ) {
+            ListingHeader(
+                type = viewModel.type,
+                uiState = uiState,
+                search = viewModel.value
+            )
+        }
 
         FilterSortSection(
             selectedSort = uiState.query.sort,
@@ -85,7 +96,8 @@ fun ProductListingScreen(
         )
 
         ProductGridSection(
-            products = uiState.products
+            products = uiState.products,
+            state = gridState
         )
     }
 

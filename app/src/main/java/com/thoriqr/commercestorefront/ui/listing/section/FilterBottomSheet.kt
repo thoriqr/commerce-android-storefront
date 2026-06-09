@@ -1,4 +1,4 @@
-package com.thoriqr.commercestorefront.ui.listing
+package com.thoriqr.commercestorefront.ui.listing.section
 
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -30,7 +30,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.thoriqr.commercestorefront.core.constants.ProductConstants
 import com.thoriqr.commercestorefront.data.model.DimensionFilterDto
+import com.thoriqr.commercestorefront.ui.listing.ProductListingQuery
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,6 +54,10 @@ fun FilterBottomSheet(
         mutableStateOf(
             query.priceMax?.toString() ?: ""
         )
+    }
+
+    var errorMessage by remember {
+        mutableStateOf<String?>(null)
     }
 
     var selectedDimensions by remember(query) {
@@ -108,9 +114,25 @@ fun FilterBottomSheet(
 
             OutlinedTextField(
                 value = minPrice,
-                onValueChange = {
-                    minPrice = it
+                onValueChange = { input ->
+                    errorMessage = null
+
+                    if (
+                        input.isEmpty() ||
+                        input.all(Char::isDigit)
+                    ) {
+
+                        val value = input.toLongOrNull()
+
+                        if (
+                            value == null ||
+                            value <= ProductConstants.PRICE_MAX_LIMIT
+                        ) {
+                            minPrice = input
+                        }
+                    }
                 },
+                isError = errorMessage != null,
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
                 placeholder  = {
@@ -128,9 +150,25 @@ fun FilterBottomSheet(
 
             OutlinedTextField(
                 value = maxPrice,
-                onValueChange = {
-                    maxPrice = it
+                onValueChange = { input ->
+                    errorMessage = null
+
+                    if (
+                        input.isEmpty() ||
+                        input.all(Char::isDigit)
+                    ) {
+
+                        val value = input.toLongOrNull()
+
+                        if (
+                            value == null ||
+                            value <= ProductConstants.PRICE_MAX_LIMIT
+                        ) {
+                            maxPrice = input
+                        }
+                    }
                 },
+                isError = errorMessage != null,
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
                 placeholder  = {
@@ -141,6 +179,18 @@ fun FilterBottomSheet(
                     keyboardType = KeyboardType.Number
                 )
             )
+
+            errorMessage?.let {
+                Spacer(
+                    modifier = Modifier.height(8.dp)
+                )
+
+                Text(
+                    text = it,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
 
             if(availableFilters.isNotEmpty()) {
 
@@ -234,9 +284,45 @@ fun FilterBottomSheet(
 
                 Button(
                     onClick = {
+                        errorMessage = null
+
+                        val min = minPrice.toIntOrNull()
+                        val max = maxPrice.toIntOrNull()
+
+                        if (
+                            min != null &&
+                            min > ProductConstants.PRICE_MAX_LIMIT
+                        ) {
+                            errorMessage =
+                                "Minimum price cannot exceed ${ProductConstants.PRICE_MAX_LIMIT}"
+
+                            return@Button
+                        }
+
+                        if (
+                            max != null &&
+                            max > ProductConstants.PRICE_MAX_LIMIT
+                        ) {
+                            errorMessage =
+                                "Maximum price cannot exceed ${ProductConstants.PRICE_MAX_LIMIT}"
+
+                            return@Button
+                        }
+
+                        if (
+                            min != null &&
+                            max != null &&
+                            min > max
+                        ) {
+                            errorMessage =
+                                "Minimum price cannot exceed maximum price"
+
+                            return@Button
+                        }
+
                         onApply(
-                            minPrice.toIntOrNull(),
-                            maxPrice.toIntOrNull(),
+                            min,
+                            max,
                             selectedDimensions.mapValues {
                                 it.value.joinToString(",")
                             }
