@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -17,7 +16,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -25,12 +23,13 @@ import com.thoriqr.commercestorefront.ui.listing.section.FilterBottomSheet
 import com.thoriqr.commercestorefront.ui.listing.section.FilterSortSection
 import com.thoriqr.commercestorefront.ui.listing.section.ListingHeader
 import com.thoriqr.commercestorefront.ui.listing.section.ProductGridSection
-import kotlinx.coroutines.flow.distinctUntilChanged
+import com.thoriqr.commercestorefront.ui.listing.skeleton.ProductGridSkeleton
 
 @SuppressLint("FrequentlyChangingValue")
 @Composable
 fun ProductListingScreen(
-    viewModel: ProductListingViewModel = hiltViewModel()
+    viewModel: ProductListingViewModel = hiltViewModel(),
+    onCategoryClick: (String) -> Unit = {}
 ) {
     val gridState = rememberLazyGridState()
 
@@ -49,6 +48,11 @@ fun ProductListingScreen(
                 uiState.query.priceMin != null ||
                 uiState.query.priceMax != null
             ) 1 else 0
+
+    val hasActiveFilters =
+        uiState.query.dimensions.isNotEmpty() ||
+                uiState.query.priceMin != null ||
+                uiState.query.priceMax != null
 
     val shouldLoadMore by remember {
         derivedStateOf {
@@ -110,7 +114,8 @@ fun ProductListingScreen(
             ListingHeader(
                 type = viewModel.type,
                 uiState = uiState,
-                search = viewModel.value
+                search = viewModel.value,
+                onSubCategoryClick = onCategoryClick
             )
         }
 
@@ -126,14 +131,33 @@ fun ProductListingScreen(
         Spacer(
             modifier = Modifier.height(12.dp)
         )
-        Text(
-            text = "Products: ${uiState.products.size}"
-        )
-        ProductGridSection(
-            products = uiState.products,
-            state = gridState,
-            isLoadingMore = uiState.isLoadingMore
-        )
+
+        when {
+
+            uiState.isProductsLoading -> {
+
+                ProductGridSkeleton()
+            }
+
+            uiState.products.isEmpty() -> {
+
+                EmptyProductsState(
+                    hasActiveFilters = hasActiveFilters,
+                    onClearFilters = {
+                        viewModel.clearFilters()
+                    }
+                )
+            }
+
+            else -> {
+
+                ProductGridSection(
+                    products = uiState.products,
+                    state = gridState,
+                    isLoadingMore = uiState.isLoadingMore
+                )
+            }
+        }
     }
 
 

@@ -7,7 +7,7 @@ data class ProductListingQuery(
     val priceMax: Int? = null,
 
     val sort: ProductSortOption = ProductSortOption.LATEST,
-    val limit: Int? = 8,
+//    val limit: Int? = 8,
 
     val dimensions: Map<String, String> = emptyMap()
 )
@@ -28,7 +28,7 @@ fun ProductListingQuery.toQueryMap(): Map<String, String> {
         params["priceMax"] = it.toString()
     }
 
-    params["limit"] = limit.toString()
+//    params["limit"] = limit.toString()
 
 
     params["sortBy"] = sort.sortBy
