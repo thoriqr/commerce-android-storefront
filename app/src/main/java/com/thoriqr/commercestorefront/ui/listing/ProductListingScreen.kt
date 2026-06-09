@@ -8,12 +8,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -21,6 +25,7 @@ import com.thoriqr.commercestorefront.ui.listing.section.FilterBottomSheet
 import com.thoriqr.commercestorefront.ui.listing.section.FilterSortSection
 import com.thoriqr.commercestorefront.ui.listing.section.ListingHeader
 import com.thoriqr.commercestorefront.ui.listing.section.ProductGridSection
+import kotlinx.coroutines.flow.distinctUntilChanged
 
 @SuppressLint("FrequentlyChangingValue")
 @Composable
@@ -44,6 +49,33 @@ fun ProductListingScreen(
                 uiState.query.priceMin != null ||
                 uiState.query.priceMax != null
             ) 1 else 0
+
+    val shouldLoadMore by remember {
+        derivedStateOf {
+
+            val lastVisibleItem =
+                gridState.layoutInfo
+                    .visibleItemsInfo
+                    .lastOrNull()
+                    ?.index ?: 0
+
+            val totalItems =
+                gridState.layoutInfo.totalItemsCount
+
+            val hasScrolled =
+                gridState.firstVisibleItemIndex > 0 ||
+                        gridState.firstVisibleItemScrollOffset > 0
+
+            hasScrolled &&
+                    lastVisibleItem >= totalItems - 2
+        }
+    }
+
+    LaunchedEffect(shouldLoadMore) {
+        if (shouldLoadMore) {
+            viewModel.loadMoreProducts()
+        }
+    }
 
     if (showFilterSheet) {
         FilterBottomSheet(
@@ -94,10 +126,13 @@ fun ProductListingScreen(
         Spacer(
             modifier = Modifier.height(12.dp)
         )
-
+        Text(
+            text = "Products: ${uiState.products.size}"
+        )
         ProductGridSection(
             products = uiState.products,
-            state = gridState
+            state = gridState,
+            isLoadingMore = uiState.isLoadingMore
         )
     }
 

@@ -112,6 +112,64 @@ class ProductListingViewModel @Inject constructor(
         reloadProducts()
     }
 
+    fun loadMoreProducts() {
+//        Log.d("Pagination", "loadMoreProducts called")
+
+        val state = _uiState.value
+
+        if (
+            state.isLoadingMore ||
+            !state.hasMore ||
+            state.nextCursor == null
+        ) {
+//            Log.d(
+//                "Pagination",
+//                "ignored: loading=${state.isLoadingMore}, hasMore=${state.hasMore}, cursor=${state.nextCursor}"
+//            )
+            return
+        }
+
+        _uiState.update {
+            it.copy(
+                isLoadingMore = true
+            )
+        }
+
+        viewModelScope.launch {
+
+            val query = _uiState.value.query.copy(
+                cursor = state.nextCursor
+            )
+
+            val result =
+                when (type) {
+
+                    ProductListingType.CATEGORY -> {
+                        productListingRepository.getByCategory(
+                            slugPath = value,
+                            filters = query
+                        )
+                    }
+
+                    ProductListingType.COLLECTION -> {
+                        productListingRepository.getByCollection(
+                            slug = value,
+                            filters = query
+                        )
+                    }
+
+                    ProductListingType.SEARCH -> {
+                        productListingRepository.getBySearch(
+                            search = value,
+                            filters = query
+                        )
+                    }
+                }
+
+            handleLoadMoreResult(result)
+        }
+    }
+
     private fun reloadProducts() {
 
         _uiState.update {
@@ -330,6 +388,46 @@ class ProductListingViewModel @Inject constructor(
                     it.copy(
                         filtersError = message,
                         isFiltersLoading = false
+                    )
+                }
+            }
+    }
+
+    private fun handleLoadMoreResult(
+        result: NetworkResult<
+                ApiResponseWithMeta<
+                        List<ProductCardDto>,
+                        CursorMetaDto
+                        >
+                >
+    ) {
+        result
+            .onSuccess { response ->
+
+//                Log.d(
+//                    "Pagination",
+//                    "loaded ${response.data?.size ?: 0} items, hasMore=${response.meta?.hasMore}, nextCursor=${response.meta?.nextCursor}"
+//                )
+
+                _uiState.update {
+                    it.copy(
+                        products = it.products + (response.data ?: emptyList()),
+                        hasMore = response.meta?.hasMore ?: false,
+                        nextCursor = response.meta?.nextCursor,
+                        isLoadingMore = false
+                    )
+                }
+            }
+            .onError { message ->
+
+//                Log.e(
+//                    "Pagination",
+//                    "load more failed: $message"
+//                )
+                _uiState.update {
+                    it.copy(
+                        productsError = message,
+                        isLoadingMore = false
                     )
                 }
             }
