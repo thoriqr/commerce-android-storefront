@@ -71,6 +71,17 @@ fun AppNavHost(
                             value = slugPath
                         )
                     )
+                },
+                onBackToHome = {
+                    navController.navigate(
+                        AppDestination.Home.route
+                    ) {
+                        popUpTo(AppDestination.Home.route) {
+                            inclusive = false
+                        }
+
+                        launchSingleTop = true
+                    }
                 }
             )
         }

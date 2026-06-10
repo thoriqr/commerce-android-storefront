@@ -19,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.thoriqr.commercestorefront.ui.components.FullPageError
 import com.thoriqr.commercestorefront.ui.listing.section.FilterBottomSheet
 import com.thoriqr.commercestorefront.ui.listing.section.FilterSortSection
 import com.thoriqr.commercestorefront.ui.listing.section.ListingHeader
@@ -29,7 +30,8 @@ import com.thoriqr.commercestorefront.ui.listing.skeleton.ProductGridSkeleton
 @Composable
 fun ProductListingScreen(
     viewModel: ProductListingViewModel = hiltViewModel(),
-    onCategoryClick: (String) -> Unit = {}
+    onCategoryClick: (String) -> Unit = {},
+    onBackToHome: () -> Unit = {}
 ) {
     val gridState = rememberLazyGridState()
 
@@ -79,6 +81,18 @@ fun ProductListingScreen(
         if (shouldLoadMore) {
             viewModel.loadMoreProducts()
         }
+    }
+
+    if (uiState.detailError != null) {
+
+        FullPageError(
+            title = "Nothing found",
+            message = "The content you're looking for may have been removed, is no longer available, or the link is invalid.",
+            actionLabel = "Back to Home",
+            onActionClick = onBackToHome
+        )
+
+        return
     }
 
     if (showFilterSheet) {
@@ -137,6 +151,15 @@ fun ProductListingScreen(
             uiState.isProductsLoading -> {
 
                 ProductGridSkeleton()
+            }
+
+            uiState.productsError != null -> {
+
+                ProductsErrorState(
+                    onRetry = {
+                        viewModel.retryProducts()
+                    }
+                )
             }
 
             uiState.products.isEmpty() -> {

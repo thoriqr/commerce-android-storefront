@@ -170,6 +170,10 @@ class ProductListingViewModel @Inject constructor(
         }
     }
 
+    fun retryProducts() {
+        reloadProducts()
+    }
+
     private fun reloadProducts() {
 
         _uiState.update {
