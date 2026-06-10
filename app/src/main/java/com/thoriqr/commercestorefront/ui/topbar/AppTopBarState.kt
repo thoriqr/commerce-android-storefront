@@ -1,4 +1,4 @@
-package com.thoriqr.commercestorefront.ui.components
+package com.thoriqr.commercestorefront.ui.topbar
 
 data class AppTopBarState(
     val title: String? = null,

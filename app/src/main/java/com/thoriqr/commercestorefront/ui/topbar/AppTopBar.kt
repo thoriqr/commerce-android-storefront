@@ -1,6 +1,9 @@
-package com.thoriqr.commercestorefront.ui.components
+package com.thoriqr.commercestorefront.ui.topbar
 
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -16,8 +19,11 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -25,20 +31,38 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.thoriqr.commercestorefront.core.common.util.KeyboardUtils
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun AppTopBar(
     state: AppTopBarState,
+    submittedQuery: String,
     onBackClick: () -> Unit = {},
     onSearchSubmit: (String) -> Unit = {},
     onCartClick: () -> Unit = {},
     onMenuClick: () -> Unit = {}
 ) {
-    val (searchQuery, setSearchQuery) =
-        remember { mutableStateOf("") }
+    var localQuery by remember {
+        mutableStateOf("")
+    }
+
+    LaunchedEffect(submittedQuery) {
+        localQuery = submittedQuery
+    }
 
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
+
+    val isKeyboardVisible = WindowInsets.isImeVisible
+
+    LaunchedEffect(isKeyboardVisible) {
+
+        if (!isKeyboardVisible) {
+
+            localQuery = submittedQuery
+
+            focusManager.clearFocus()
+        }
+    }
 
     TopAppBar(
         navigationIcon = {
@@ -58,8 +82,10 @@ fun AppTopBar(
             if (state.showSearch) {
 
                 OutlinedTextField(
-                    value = searchQuery,
-                    onValueChange = setSearchQuery,
+                    value = localQuery,
+                    onValueChange = {
+                        localQuery = it
+                    },
                     modifier = Modifier.fillMaxWidth(),
 
                     singleLine = true,
@@ -82,14 +108,14 @@ fun AppTopBar(
 
                     keyboardActions = KeyboardActions(
                         onSearch = {
-                            if (searchQuery.isNotBlank()) {
+                            if (localQuery.isNotBlank()) {
                                 KeyboardUtils.hide(
                                     focusManager = focusManager,
                                     keyboardController = keyboardController
                                 )
 
                                 onSearchSubmit(
-                                    searchQuery.trim()
+                                    localQuery.trim()
                                 )
                             }
                         }
