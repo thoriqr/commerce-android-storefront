@@ -18,6 +18,13 @@ object AppTopBarConfig {
                 )
             }
 
+            route == AppDestination.Categories.route -> {
+                AppTopBarState(
+                    showSearch = true,
+                    showCartButton = true
+                )
+            }
+
             route?.startsWith("product-listing") == true -> {
 
                 AppTopBarState(

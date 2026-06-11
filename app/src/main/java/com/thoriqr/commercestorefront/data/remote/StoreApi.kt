@@ -5,6 +5,7 @@ import com.thoriqr.commercestorefront.data.model.ApiResponse
 import com.thoriqr.commercestorefront.data.model.ApiResponseWithMeta
 import com.thoriqr.commercestorefront.data.model.BannerDto
 import com.thoriqr.commercestorefront.data.model.CategoryDetailDto
+import com.thoriqr.commercestorefront.data.model.CategoryTreeDto
 import com.thoriqr.commercestorefront.data.model.CollectionDetailDto
 import com.thoriqr.commercestorefront.data.model.CollectionPreviewDto
 import com.thoriqr.commercestorefront.data.model.DimensionFilterDto
@@ -28,6 +29,9 @@ interface StoreApi {
     suspend fun getCategoryDetail(
         @Query("slugPath") slugPath: String
     ): ApiResponse<CategoryDetailDto>
+
+    @GET("store/categories/mega-menu")
+    suspend fun getCategoryTree(): ApiResponse<List<CategoryTreeDto>>
 
     @GET("store/collections/preview")
     suspend fun getCollectionPreview(): ApiResponse<List<CollectionPreviewDto>>

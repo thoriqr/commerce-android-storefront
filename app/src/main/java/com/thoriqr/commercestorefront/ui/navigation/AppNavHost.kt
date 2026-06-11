@@ -53,7 +53,16 @@ fun AppNavHost(
         }
 
         composable(AppDestination.Categories.route) {
-            CategoriesScreen()
+            CategoriesScreen(
+                onCategoryClick = { slugPath  ->
+                    navController.navigate(
+                        AppDestination.ProductListing.createRoute(
+                            type = ProductListingType.CATEGORY,
+                            value = slugPath
+                        )
+                    )
+                },
+            )
         }
 
         composable(AppDestination.Account.route) {

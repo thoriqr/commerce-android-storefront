@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -26,7 +27,7 @@ fun HomeScreen(
     onCategoryClick: (PopularCategoryDto) -> Unit,
     onCollectionClick: (CollectionPreviewDto) -> Unit
 ) {
-    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(24.dp),
@@ -34,24 +35,24 @@ fun HomeScreen(
     ) {
 
         item {
-            if (uiState.value.isBannerLoading) {
+            if (uiState.isBannerLoading) {
                 HeroBannerCarouselSkeleton()
             } else {
                 HeroBannerCarousel(
-                    banners = uiState.value.banners,
+                    banners = uiState.banners,
                     onBannerClick = onBannerClick
                 )
             }
         }
 
         item {
-            if (uiState.value.isPopularCategoriesLoading) {
+            if (uiState.isPopularCategoriesLoading) {
                 PopularCategoriesSkeleton(
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
             } else {
                 PopularCategoriesSection(
-                    categories = uiState.value.popularCategories,
+                    categories = uiState.popularCategories,
                     onCategoryClick = onCategoryClick,
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
@@ -59,11 +60,11 @@ fun HomeScreen(
         }
 
         item {
-            if (uiState.value.isCollectionPreviewLoading) {
+            if (uiState.isCollectionPreviewLoading) {
                 CollectionPreviewSkeleton(modifier = Modifier.padding(horizontal = 16.dp))
             } else {
                 CollectionPreviewSection(
-                    collections = uiState.value.collectionPreview,
+                    collections = uiState.collectionPreview,
                     modifier = Modifier.padding(horizontal = 16.dp),
                     onCollectionClick = onCollectionClick
                 )

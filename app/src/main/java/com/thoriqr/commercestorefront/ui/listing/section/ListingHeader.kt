@@ -6,9 +6,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material3.AssistChip
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -66,8 +68,8 @@ private fun CollectionHeader (title: String) {
     ) {
         Text(
             text = title,
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.SemiBold
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Medium
         )
 
         Text(
@@ -94,8 +96,8 @@ private fun CategoryHeader(
 
         Text(
             text = title,
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.SemiBold
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Medium
         )
 
         Text(
@@ -110,6 +112,8 @@ private fun CategoryHeader(
                 modifier = Modifier.height(8.dp)
             )
 
+
+
             Row (
                 modifier = Modifier.horizontalScroll(
                     rememberScrollState()
@@ -119,14 +123,23 @@ private fun CategoryHeader(
 
                 children.forEach { child ->
 
-                    AssistChip(
+                    Surface(
+                        shape = RoundedCornerShape(50),
+                        tonalElevation = 2.dp,
                         onClick = {
                             onCategoryClick(child.slugPath)
                         },
-                        label = {
-                            Text(child.name)
-                        }
-                    )
+                    ) {
+                        Text(
+                            text = child.name,
+                            modifier = Modifier.padding(
+                                horizontal = 16.dp,
+                                vertical = 8.dp
+                            ),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+
                 }
             }
         }
@@ -144,8 +157,8 @@ fun SearchHeader(title: String) {
     ) {
         Text(
             text = "Search results",
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.SemiBold
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Medium
         )
 
         Text(
