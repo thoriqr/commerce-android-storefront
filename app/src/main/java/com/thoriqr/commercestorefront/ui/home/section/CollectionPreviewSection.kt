@@ -24,7 +24,8 @@ import com.thoriqr.commercestorefront.ui.components.ProductCard
 fun CollectionPreviewSection(
     modifier: Modifier = Modifier,
     collections: List<CollectionPreviewDto>,
-    onCollectionClick: (CollectionPreviewDto) -> Unit
+    onCollectionClick: (CollectionPreviewDto) -> Unit,
+    onProductClick: (Int) -> Unit = {}
 ) {
     Column(
         modifier = modifier,
@@ -74,7 +75,10 @@ fun CollectionPreviewSection(
 
                         ProductCard(
                             product = product,
-                            modifier = Modifier.width(180.dp)
+                            modifier = Modifier.width(180.dp),
+                            onProductClick = {
+                                onProductClick(product.id)
+                            }
                         )
                     }
                 }

@@ -2,8 +2,10 @@ package com.thoriqr.commercestorefront.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.thoriqr.commercestorefront.core.common.navigation.AppDestination
 import com.thoriqr.commercestorefront.core.common.navigation.BannerUrlParser
 import com.thoriqr.commercestorefront.ui.account.AccountScreen
@@ -11,6 +13,7 @@ import com.thoriqr.commercestorefront.ui.categories.CategoriesScreen
 import com.thoriqr.commercestorefront.ui.home.HomeScreen
 import com.thoriqr.commercestorefront.ui.listing.ProductListingScreen
 import com.thoriqr.commercestorefront.ui.listing.ProductListingType
+import com.thoriqr.commercestorefront.ui.product.ProductDetailScreen
 
 @Composable
 fun AppNavHost(
@@ -48,7 +51,12 @@ fun AppNavHost(
                             value = collection.slug
                         )
                     )
-                }
+                },
+                onProductClick = { productId ->
+                    navController.navigate(
+                        AppDestination.ProductDetail.createRoute(productId)
+                    )
+                },
             )
         }
 
@@ -73,6 +81,11 @@ fun AppNavHost(
             route = AppDestination.ProductListing.route
         ) {
             ProductListingScreen(
+                onProductClick = { productId ->
+                    navController.navigate(
+                        AppDestination.ProductDetail.createRoute(productId)
+                    )
+                },
                 onCategoryClick = { slugPath  ->
                     navController.navigate(
                         AppDestination.ProductListing.createRoute(
@@ -93,6 +106,17 @@ fun AppNavHost(
                     }
                 }
             )
+        }
+
+        composable(
+            route = AppDestination.ProductDetail.route,
+            arguments = listOf(
+                navArgument("productId") {
+                    type = NavType.IntType
+                }
+            )
+        ) {
+            ProductDetailScreen()
         }
     }
 }

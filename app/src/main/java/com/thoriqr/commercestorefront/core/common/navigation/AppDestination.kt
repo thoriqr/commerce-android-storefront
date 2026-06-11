@@ -28,4 +28,14 @@ sealed class AppDestination(
             return "product-listing/${type.name.lowercase()}/$encodedValue"
         }
     }
+
+    data object ProductDetail :
+        AppDestination("product/{productId}") {
+
+        fun createRoute(
+            productId: Int
+        ): String {
+            return "product/$productId"
+        }
+    }
 }

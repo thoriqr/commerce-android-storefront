@@ -25,7 +25,8 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     onBannerClick: (BannerDto) -> Unit,
     onCategoryClick: (PopularCategoryDto) -> Unit,
-    onCollectionClick: (CollectionPreviewDto) -> Unit
+    onCollectionClick: (CollectionPreviewDto) -> Unit,
+    onProductClick: (Int) -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -66,7 +67,8 @@ fun HomeScreen(
                 CollectionPreviewSection(
                     collections = uiState.collectionPreview,
                     modifier = Modifier.padding(horizontal = 16.dp),
-                    onCollectionClick = onCollectionClick
+                    onCollectionClick = onCollectionClick,
+                    onProductClick = onProductClick
                 )
             }
         }

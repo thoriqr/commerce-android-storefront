@@ -35,6 +35,16 @@ object AppTopBarConfig {
                 )
             }
 
+            route?.startsWith("product/") == true -> {
+
+                AppTopBarState(
+                    showBackButton = true,
+                    showSearch = true,
+                    showCartButton = true,
+                    showMenuButton = true
+                )
+            }
+
             else -> {
 
                 AppTopBarState(

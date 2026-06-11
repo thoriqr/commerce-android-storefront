@@ -11,6 +11,8 @@ import com.thoriqr.commercestorefront.data.model.CollectionPreviewDto
 import com.thoriqr.commercestorefront.data.model.DimensionFilterDto
 import com.thoriqr.commercestorefront.data.model.PopularCategoryDto
 import com.thoriqr.commercestorefront.data.model.ProductCardDto
+import com.thoriqr.commercestorefront.data.model.ProductDetailDto
+import com.thoriqr.commercestorefront.data.model.VariantDetailDto
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -71,4 +73,16 @@ interface StoreApi {
         @QueryMap filters: Map<String, String>
     ): ApiResponseWithMeta<
             List<ProductCardDto>, CursorMetaDto>
+
+    @GET("store/products/{id}")
+    suspend fun getProduct(
+        @Path("id") id: Int
+    ): ApiResponse<ProductDetailDto>
+
+    @GET("store/products/{productId}/variants/{variantId}")
+    suspend fun getProductVariant(
+        @Path("productId") productId: Int,
+        @Path("variantId") variantId: Int
+    ): ApiResponse<VariantDetailDto>
+
 }

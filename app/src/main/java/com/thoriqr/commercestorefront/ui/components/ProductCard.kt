@@ -24,11 +24,14 @@ import com.thoriqr.commercestorefront.data.model.ProductCardDto
 @Composable
 fun ProductCard(
     product: ProductCardDto,
-    modifier: Modifier = Modifier)
+    modifier: Modifier = Modifier,
+    onProductClick: () -> Unit = {}
+)
 {
     Card(
         modifier = modifier,
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(16.dp),
+        onClick = onProductClick
     ) {
         Column {
             AsyncImage(

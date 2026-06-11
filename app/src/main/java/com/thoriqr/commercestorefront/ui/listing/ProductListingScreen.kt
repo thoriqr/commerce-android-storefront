@@ -30,6 +30,7 @@ import com.thoriqr.commercestorefront.ui.listing.skeleton.ProductGridSkeleton
 @Composable
 fun ProductListingScreen(
     viewModel: ProductListingViewModel = hiltViewModel(),
+    onProductClick: (Int) -> Unit = {},
     onCategoryClick: (String) -> Unit = {},
     onBackToHome: () -> Unit = {}
 ) {
