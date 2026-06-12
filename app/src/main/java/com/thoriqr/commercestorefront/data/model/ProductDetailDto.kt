@@ -9,12 +9,13 @@ data class ProductDetailDto(
     val slug: String,
     val description: String,
     val isAvailable: Boolean,
-    val warning: String? = null,
+    val warning: ProductDetailWarningType? = null,
     val isVariant: Boolean,
     val initialVariantId: Int,
     val category: ProductCategoryDto,
     val dimensions: List<ProductDimensionDto>,
     val variants: List<ProductVariantDto>,
+    val images: List<ProductImage>
 )
 
 @Serializable
@@ -54,7 +55,7 @@ data class ProductImage(
     val id: Int,
     val imageKey: String,
     val type: String,
-    val signature: ImageSignature
+    val signature: ImageSignature? = null
 )
 
 @Serializable
@@ -62,3 +63,9 @@ data class ImageSignature(
     val dimensionKey: String,
     val valueKey: String,
 )
+
+@Serializable
+enum class ProductDetailWarningType {
+    UNAVAILABLE,
+}
+

@@ -12,5 +12,12 @@ data class VariantDetailDto(
     val weight: Int,
     val weightUnit: String,
     val isAvailable: Boolean,
-    val warning: String? = null
+    val warning: VariantDetailWarningType? = null
 )
+
+@Serializable
+enum class VariantDetailWarningType {
+    UNAVAILABLE,
+    OUT_OF_STOCK,
+    LOW_STOCK,
+}

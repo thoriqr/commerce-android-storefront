@@ -32,7 +32,7 @@ fun ProductListingScreen(
     viewModel: ProductListingViewModel = hiltViewModel(),
     onProductClick: (Int) -> Unit = {},
     onCategoryClick: (String) -> Unit = {},
-    onBackToHome: () -> Unit = {}
+    onBackToHome: () -> Unit = {},
 ) {
     val gridState = rememberLazyGridState()
 
@@ -112,7 +112,7 @@ fun ProductListingScreen(
                     dimensions = dimensions
                 )
             },
-            onClear = { viewModel.clearFilters() }
+            onClear = viewModel::clearFilters
         )
     }
 
@@ -157,9 +157,7 @@ fun ProductListingScreen(
             uiState.productsError != null -> {
 
                 ProductsErrorState(
-                    onRetry = {
-                        viewModel.retryProducts()
-                    }
+                    onRetry = viewModel::retryProducts
                 )
             }
 
@@ -167,9 +165,7 @@ fun ProductListingScreen(
 
                 EmptyProductsState(
                     hasActiveFilters = hasActiveFilters,
-                    onClearFilters = {
-                        viewModel.clearFilters()
-                    }
+                    onClearFilters = viewModel::clearFilters
                 )
             }
 
@@ -178,11 +174,10 @@ fun ProductListingScreen(
                 ProductGridSection(
                     products = uiState.products,
                     state = gridState,
-                    isLoadingMore = uiState.isLoadingMore
+                    isLoadingMore = uiState.isLoadingMore,
+                    onProductClick = onProductClick
                 )
             }
         }
     }
-
-
 }

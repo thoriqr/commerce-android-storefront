@@ -20,7 +20,8 @@ import com.thoriqr.commercestorefront.ui.components.ProductCard
 fun ProductGridSection(
     products: List<ProductCardDto>,
     state: LazyGridState,
-    isLoadingMore: Boolean
+    isLoadingMore: Boolean,
+    onProductClick: (Int) -> Unit = {}
 ) {
     LazyVerticalGrid(
         state = state,
@@ -35,7 +36,10 @@ fun ProductGridSection(
         ) { product ->
 
             ProductCard(
-                product = product
+                product = product,
+                onProductClick = {
+                    onProductClick(product.id)
+                }
             )
         }
 
